@@ -1,0 +1,77 @@
+local redtweeninfo = TweenInfo.new(8)
+local redinfo = {Color = Color3.new(1, 1, 1)}
+----------
+for i,v in pairs(workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value):GetDescendants()) do
+    if v:IsA("Light") then
+        game.TweenService:Create(v, redtweeninfo, redinfo):Play()
+    end
+end
+
+local plr = game.Players.LocalPlayer
+local chr = plr.Character
+local TweenService = game:GetService("TweenService")
+
+local dmg = true
+local s = game:GetObjects("rbxassetid://121128782273259")[1]
+s.Parent = game.Workspace
+local entity = s:FindFirstChildWhichIsA("BasePart")
+entity.CanCollide = true
+entity.Anchored = true
+entity.Rush:Destroy()
+
+local att = entity.Attachment
+local face = att.Face
+face.Brightness = 0
+face.Texture = "rbxassetid://135054149040772"
+face.LightInfluence = 0.1
+face.LightEmission = 0.1
+face.Lifetime = NumberRange.new(0.1, 0.8)
+face.Rate = 1000
+face.Rotation = NumberRange.new(0, 0)
+face.Speed = NumberRange.new(0, 5)
+
+local Bubble = att.Bubble
+Bubble.Lifetime = NumberRange.new(1, 10)
+Bubble.Size = NumberSequence.new(20)
+Bubble.Brightness = 2
+
+entity.Rush.PlaybackSpeed = 0.05
+entity.Rush.Volume = 5
+entity.Rush.MaxDistance = 150
+
+entity.sound.PlaybackSpeed = 0.07
+entity.sound.Volume = 5
+entity.sound.MaxDistance = 150
+
+task.wait(3)
+task.spawn(function()
+while true do wait(0.1)
+local ray = game.Workspace:Raycast(entity.Position,game.Players.LocalPlayer.Character.HumanoidRootPart.Position - entity.Position)
+        if ray.Instance.Parent == game.Players.LocalPlayer.Character or ray.Instance.Parent.Parent == game.Players.LocalPlayer.Character then
+        if dmg == true then
+           game.Players.LocalPlayer.Character.Humanoid.Health -= 3
+           game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Abyss"
+        end
+        end
+end
+end)
+
+local rooms = workspace.CurrentRooms
+local a = rooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value + 1)
+local b = rooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+local c = rooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value - 1)
+
+entity.CFrame = a.RoomEntrance.CFrame * CFrame.new(0,3,0)
+local to = game.TweenService:Create(entity, TweenInfo.new(10, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {Position = b.RoomEntrance.Position + Vector3.new(0, 3, 0)})
+          to:Play()
+          to.Completed:Wait()
+local tso = game.TweenService:Create(entity, TweenInfo.new(10, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {Position = c.RoomEntrance.Position + Vector3.new(0, 3, 0)})
+          tso:Play()
+          tso.Completed:Wait()
+dmg = false
+entity.Rush:Stop()
+entity.sound:Stop()
+entity.Anchored = false
+entity.CanCollide = false
+local debris = game:GetService("Debris")
+debris:AddItem(s, 3)
