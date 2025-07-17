@@ -28,43 +28,43 @@ local v4 = math.random(1, 6);
 
 if v4 == 1 then
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 if v4 == 2 then
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 if v4 == 3 then
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 if v4 == 4 then
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 if v4 == 5 then
 
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 if v4 == 6 then
 
-	l__ImageLabel__1.Image = "rbxassetid://104301532085372";
+	l__ImageLabel__1.Image = "rbxassetid://111080476962471";
 
 end;
 
 shadow.Jumpscare:Play();
-for v5 = 1, 35 do
+for v5 = 1, 45 do
 local v6 = math.random(1, 6);
 	if v6 == 1 then
 		TweenService:Create(shadow, TweenInfo.new(0), {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play();
@@ -82,7 +82,7 @@ local v6 = math.random(1, 6);
 		l__ImageLabel__1.Size = l__ImageLabel__1.Size + UDim2.new(l__SizeValue__3.Value, 0, l__SizeValue__3.Value, 0);
 		l__ImageLabel__1.Rotation = math.random(-25, 25);
 		l__SizeValue__3.Value = l__SizeValue__3.Value - 0.01;
-		wait(0.001);
+		wait(0);
 end;
 		l__ImageLabel__1.ImageColor3 = Color3.new(0, 0, 0);
 		shadow.BackgroundColor3 = Color3.new(0, 0, 0);
@@ -159,15 +159,15 @@ entity = primary_part
 local plr = game.Players.LocalPlayer
 local chr = plr.Character
 
-entity.CFrame = workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value):WaitForChild("RoomEntrance").CFrame * CFrame.new(0,2,-15)
+entity.CFrame = workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value):WaitForChild("RoomEntrance").CFrame * CFrame.new(0,4,-15)
 entity.CanCollide = false
 entity.Anchored = true
-entity.ParticleEmitter3.Texture = "rbxassetid://104301532085372"
+entity.ParticleEmitter3.Texture = "rbxassetid://111080476962471"
 
 local sound = entity.PlaySound
 local far = entity.Footsteps
 
-sound.PlaybackSpeed = 0.45
+sound.PlaybackSpeed = 0.3
 sound.Volume = 1
 
 local ab = Instance.new("DistortionSoundEffect",sound)
@@ -184,28 +184,36 @@ local a = att.ParticleEmitter1
 local b = att.ParticleEmitter2
 local c = att.ParticleEmitter3
 a.Brightness = 20
-a.Texture = "rbxassetid://104301532085372"
+a.Texture = "rbxassetid://111080476962471"
 b.Brightness = 20
-b.Texture = "rbxassetid://104301532085372"
+b.Texture = "rbxassetid://111080476962471"
 c.Brightness = 20
-c.Texture = "rbxassetid://104301532085372"
+c.Texture = "rbxassetid://111080476962471"
 
-a.Size = NumberSequence.new(5)
-b.Size = NumberSequence.new(5)
-c.Size = NumberSequence.new(5)
+a.Size = NumberSequence.new(7)
+b.Size = NumberSequence.new(7)
+c.Size = NumberSequence.new(7)
 
-c.Lifetime = NumberRange.new(0.5, 1)
+a.Lifetime = NumberRange.new(0.1, 0.2)
+b.Lifetime = NumberRange.new(0.1, 0.2)
+c.Lifetime = NumberRange.new(0.1, 0.1)
 local dmg = true	
 
 local light = Instance.new("PointLight",entity)
 light.Color = Color3.fromRGB(255, 0, 0)
 light.Brightness = 50
-light.Range = 10
+light.Range = 5
 
 game.Workspace.CurrentRooms.ChildAdded:Connect(function()
 dmg = false
 s:Destroy()
 end)
+
+local roast = Instance.new("Sound")
+    roast.Parent = s
+    roast.SoundId = "rbxassetid://9126213995"
+    roast.Volume = 5
+    roast:Play()
 
 task.wait(2)
     task.spawn(function()
@@ -219,7 +227,7 @@ task.wait(2)
 			
 			if hum and hrp and (hrp.Position - entity.Position).Magnitude <= 10 then
 			if not chr:GetAttribute("Hiding") then
-	            game.Players.LocalPlayer.Character.Humanoid.Health -= 1.3
+	            game.Players.LocalPlayer.Character.Humanoid.Health -= 3
 	            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed -= 0.25
                 game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Darkness Scribble"
                 
