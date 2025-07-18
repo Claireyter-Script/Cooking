@@ -112,21 +112,22 @@ local moduleScripts = {
 	local playSound = entity:FindFirstChild("PlaySound")
 	if playSound then
 		playSound.TimePosition = 0
+		playSound.Pitch = 2
 		playSound:Play()
 	end
 	
-	local p = nil
-	
-	task.spawn(function()
-	game:GetService("RunService").RenderStepped:Connect(function()
-	if s.PlaySound then
-	p = s.PlaySound
-	p.Volume = 0
-	p:Destroy()
-	p = nil
+    local count = 0
+
+    for _, obj in ipairs(s:GetChildren()) do
+	if obj:IsA("Sound") and obj.Name == "PlaySound" then
+        obj.Volume = 0
+		obj:Destroy()
+		count += 1
+		if count >= 2 then
+			break
+		end
 	end
-	end)
-    end)
+    end
     
 	local horrorScream = entity:FindFirstChild("HORROR SCREAM 15")
 
@@ -161,7 +162,8 @@ local moduleScripts = {
 
 				if horrorScream then
 					horrorScream:Play()
-                                  horrorScream.Volume = 10
+    	                           horrorScream.Pitch = 2
+                                  horrorScream.Volume = 5
                                         task.delay(2, function()
                                                 horrorScream:Stop()
                                         end)
@@ -176,7 +178,7 @@ local moduleScripts = {
                                  color.Saturation = 1
                                  color.Contrast = 1
 task.spawn(function()
-    local a = game:GetService("TweenService"):Create(color, TweenInfo.new(6), {
+    local a = game:GetService("TweenService"):Create(color, TweenInfo.new(10), {
         TintColor = Color3.fromRGB(255, 255, 255),
         Saturation = 0,
         Contrast = 0
@@ -185,8 +187,35 @@ task.spawn(function()
     a.Completed:Wait()
     color:Destroy()
 end)
+task.spawn(function()
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "BloodEffect"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.Position = UDim2.new(0, 0, 0, 0)
+frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+frame.BackgroundTransparency = 1 -- Bắt đầu ẩn hoàn toàn
+frame.ZIndex = 10
+frame.Parent = gui
+
+    local TweenService = game:GetService("TweenService")
+	frame.BackgroundTransparency = 1
+	local fadeIn = TweenService:Create(frame, TweenInfo.new(0.5), {BackgroundTransparency = 0.4})
+	local fadeOut = TweenService:Create(frame, TweenInfo.new(3), {BackgroundTransparency = 1})
+	
+	fadeIn:Play()
+	fadeIn.Completed:Wait()
+	fadeOut:Play()
+    fadeOut.Completed:Wait()
+    gui:Destroy()
+end)
                                                 camShake:Shake(cameraShaker.Presets.Explosion)
-                                                game.ReplicatedStorage:FindFirstChild("Player_".. game.Players.LocalPlayer.Character.Name).Total.DeathCause = "Another Shocker"
+                                                game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Another Shocker"
 					end
 				end)
 
