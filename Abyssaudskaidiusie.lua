@@ -14,6 +14,7 @@ local TweenService = game:GetService("TweenService")
 local dmg = true
 local s = game:GetObjects("rbxassetid://121128782273259")[1]
 s.Parent = game.Workspace
+s.Name = "Abyss"
 local entity = s:FindFirstChildWhichIsA("BasePart")
 entity.CanCollide = true
 entity.Anchored = true
