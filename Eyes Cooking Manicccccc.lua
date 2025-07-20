@@ -19,8 +19,6 @@ local d = Instance.new("PitchShiftSoundEffect",eyes.Ambience)
 d.Octave = 0.5
 local e = Instance.new("DistortionSoundEffect",eyes.Ambience)
 e.Level = 0.75
-local f = Instance.new("DistortionSoundEffect",eyes.Ambience)
-f.Level = 0.5
 
 wait(3)
 task.spawn(function()
@@ -28,9 +26,12 @@ task.spawn(function()
 	    task.wait(0.2)
 	    local _ , camera = game.Workspace.CurrentCamera:WorldToViewportPoint(eyes.Position)
 	    if camera then
+    	local ray = game.Workspace:Raycast(eyes.Position,game.Players.LocalPlayer.Character.HumanoidRootPart.Position - eyes.Position)
+        if ray.Instance.Parent == game.Players.LocalPlayer.Character or ray.Instance.Parent.Parent == game.Players.LocalPlayer.Character then
             	game.Players.LocalPlayer.Character.Humanoid:TakeDamage(1.5)
                 eyes.Attack:Play()
 	    end
+    	end
 	if game.Players.LocalPlayer.Character.Humanoid.Health <= 0 then
                 game.ReplicatedStorage.GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Manic Eyes"
                 break end
