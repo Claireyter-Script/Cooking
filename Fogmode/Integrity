@@ -1,0 +1,82 @@
+local RunService = game:GetService("RunService")
+
+local plr = game.Players.LocalPlayer
+local chr = plr.Character or plr.CharacterAdded:Wait()
+local hrp = chr:WaitForChild("HumanoidRootPart")
+local hum = chr:WaitForChild("Humanoid")
+local rs = game:GetService("ReplicatedStorage")
+local dmg = true
+
+local part = Instance.new("Part")
+part.Size = Vector3.new(5, 5, 5)
+part.CFrame = workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value):WaitForChild("RoomEntrance").CFrame * CFrame.new(0,0,-20)
+part.Anchored = true
+part.Transparency = 1
+part.CanCollide = false
+part.CastShadow = false
+part.Parent = workspace
+
+local billboard = Instance.new("BillboardGui")
+billboard.Size = UDim2.new(5, 0, 5, 0)
+billboard.AlwaysOnTop = true
+billboard.Size = UDim2.new(15, 0, 15, 0)
+billboard.SizeOffset = Vector2.new(0, 0.1)
+billboard.Parent = part
+billboard.Adornee = part
+
+local imageLabel = Instance.new("ImageLabel")
+imageLabel.Size = UDim2.new(1, 0, 1, 0)
+imageLabel.BackgroundTransparency = 1
+imageLabel.Image = "rbxassetid://84339464607432"
+imageLabel.Parent = billboard
+
+local light = Instance.new("PointLight")
+light.Color = Color3.fromRGB(255, 0, 0)
+light.Brightness = 5
+light.Range = 10
+light.Shadows = true
+light.Parent = part
+
+local sa = Instance.new("Sound", workspace)
+sa.SoundId = "rbxassetid://2738830850"
+sa.PlaybackSpeed = 0.8
+sa.Volume = 5
+sa:Play()
+
+sa.Ended:Connect(function()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+        if dmg and not chr:GetAttribute("Hiding") then
+            player.Character:FindFirstChild("Humanoid").Health = 0
+            rs.GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Integrity"
+        end
+        end
+    end
+end)
+
+local conn
+conn = RunService.Heartbeat:Connect(function()
+    if chr:GetAttribute("Hiding") then
+        dmg = false
+        part:Destroy()
+
+        -- Tạo tween
+        local tween = game:GetService("TweenService"):Create(
+            sa,
+            TweenInfo.new(6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {PlaybackSpeed = 0}
+        )
+
+        -- Khi tween xong thì xóa sound
+        tween.Completed:Connect(function()
+            if sa then
+                sa:Destroy()
+            end
+        end)
+
+        tween:Play()
+
+        -- Ngắt kết nối để không check nữa
+        conn:Disconnect()
+    end
+end)
