@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://gist.githubusercontent.com/Claireyter-Script/8bc2ca75466bd2a761d39f301a610405/raw/9ebf87783cc72f0ab9c084202841be8b6808486c/FogMode"))()
+print("fuck")
