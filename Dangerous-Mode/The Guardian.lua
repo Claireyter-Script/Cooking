@@ -77,6 +77,7 @@ local function dmg()
 	local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 	if humanoid then
 		humanoid.Health -= 7
+		game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "The Guardian"
 	end
 
 	local dmg = Instance.new("ColorCorrectionEffect", game.Lighting)
