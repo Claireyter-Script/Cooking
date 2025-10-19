@@ -129,7 +129,7 @@ moveConn = RunService.Heartbeat:Connect(function(dt)
 		if stats then
 			local stat = stats:FindFirstChild("Player_" .. player.Name)
 			if stat and stat:FindFirstChild("Total") and stat.Total:FindFirstChild("DeathCause") then
-				stat.Total.DeathCause.Value = "Follow"
+				stat.Total.DeathCause.Value = "The Follow"
 			end
 		end
 	end
