@@ -95,6 +95,7 @@ local function dmg()
 	game.Debris:AddItem(dmg, 0.1)
 end
 
+wait(1)
 task.spawn(function()
 	while true do
 		wait(2)
