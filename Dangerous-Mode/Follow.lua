@@ -118,9 +118,9 @@ moveConn = RunService.Heartbeat:Connect(function(dt)
 		local dir = (humanoidRoot.Position - head.Position).Unit
 		local newPos = head.Position + dir * moveSpeed * dt
 		head.CFrame = CFrame.new(newPos, humanoidRoot.Position)
-		if not head.PlaySound.IsPlaying then head.PlaySound:Play() end
+		if not head.PlaySound.IsPlaying then head.PlaySound:Resume() end
 	else
-		if head.PlaySound.IsPlaying then head.PlaySound:Stop() end
+		if head.PlaySound.IsPlaying then head.PlaySound:Pause() end
 	end
 
 	if not looking and dist <= killDistance and humanoid.Health > 0 then
