@@ -1,6 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game.Players
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRoot = character:WaitForChild("HumanoidRootPart")
 
 local Color = Instance.new("ColorCorrectionEffect", game.Lighting)
 
@@ -25,7 +31,7 @@ game.Debris:AddItem(sound2, sound2.TimeLength)
 
 local entity = game:GetObjects("rbxassetid://121128782273259")[1]:FindFirstChildWhichIsA("BasePart")
 entity.Parent = game.Workspace
-entity.CanCollide = true
+entity.CanCollide = false
 entity.Anchored = true
 entity.Rush:Destroy()
 entity:WaitForChild("Glow purple"):Destroy()
@@ -67,7 +73,7 @@ local dmg = true
 
 task.spawn(function()
 wait(2)
-while dmg do wait(1)
+while dmg do wait(1.5)
 if not dmg then break end
 for _, player in ipairs(game.Players:GetPlayers()) do
 			local char = player.Character
@@ -83,6 +89,25 @@ for _, player in ipairs(game.Players:GetPlayers()) do
 			end
 end
 end
+end)
+
+RunService.Heartbeat:Connect(function(dt)
+	if not entity or not entity:IsDescendantOf(workspace) or character:GetAttribute("Hiding") then return end
+		local dir = (entity.Position - humanoidRoot.Position)
+		local dist = dir.Magnitude
+
+		if dist > 2 then
+			local pull = dir.Unit * 6 * dt
+			humanoidRoot.CFrame = humanoidRoot.CFrame + pull
+		end
+
+		if dist <= (entity.Size.Magnitude / 2 + 2) then
+			local hum = character:FindFirstChildOfClass("Humanoid")
+			if hum and hum.Health > 0 then
+				hum:TakeDamage(5 * dt)
+				game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Fr0st3r"
+			end
+		end
 end)
 
 game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
