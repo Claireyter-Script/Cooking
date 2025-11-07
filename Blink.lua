@@ -31,22 +31,27 @@ end
 -- Sounds
 local Initiate = model:FindFirstChild("Initiate")
 local Change = model:FindFirstChild("Change")
+local PointLight = model:FindFirstChild("PointLight")
+
 if Initiate then Initiate.Parent = workspace end
 if Change then
-	Change.Parent = workspace
-	Change.Volume = 5
+	Change.Volume = 10
 end
 
-model.Sound.Volume = 3
+PointLight.Range = 15
+PointLight.Brightness = 2
+
+model.Sound.Volume = 2
 local newsound = model.Sound:Clone()
 newsound.Parent = model
 newsound.PlaybackSpeed = 0.05
-newsound.Volume = 5
+newsound.MaxDistance = 10000
+newsound.Volume = 3
 
 -- Damage sound
 local DmgSound = Instance.new("Sound")
 DmgSound.SoundId = "rbxassetid://7837537174"
-DmgSound.Volume = 2
+DmgSound.Volume = 0.8
 DmgSound.PlaybackSpeed = 0.5
 DmgSound.Parent = workspace
 
@@ -71,12 +76,10 @@ task.spawn(function()
 		pcall(function() DmgSound:Destroy() end)
 		pcall(function() Change:Destroy() end)
 		pcall(function()
-        
-             open:Destroy()
-             close.Enabled = true
 		conn:Disconnect()
 			if model.Sound then
 				local tween = TweenService:Create(model.Sound, TweenInfo.new(3), {PlaybackSpeed = 0})
+				TweenService:Create(PointLight, TweenInfo.new(5), {Range = 0})
 				tween:Play()
 				tween.Completed:Wait()
 			end
@@ -121,11 +124,20 @@ task.spawn(function()
 	while dmg do
 		task.wait(5)
 		if not Change or not Change.Parent then break end
-		pcall(function() Change:Play() end)
+
+		pcall(function()
+    	local c = Change:Clone()
+    	c.Parent = workspace
+	    c:Play()
+	    game.Debris:AddItem(c, c.TimeLength + 0.5)
+        end)
+
 		task.wait(0.1)
 		SwitchEye()
 	end
 end)
+
+wait(1)
 
 -- Damage loop
 task.spawn(function()
@@ -139,9 +151,9 @@ task.spawn(function()
     	local moved = (hrp.Position - lastPos).Magnitude > 0.1
     
 		if open and open.Enabled and (vel > 0.5 or moved) then
-			hum:TakeDamage(3)
+			hum:TakeDamage(5)
 			pcall(function()
-				Color.TintColor = Color3.fromRGB(250, 190, 255)
+				Color.TintColor = Color3.fromRGB(100, 0, 100)
 				Color.Saturation = -1
 				Color.Contrast = 0.5
 				DmgSound:Play()
