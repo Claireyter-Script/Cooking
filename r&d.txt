@@ -1,0 +1,519 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/uknowiejiekeeowowowoeeo/A/refs/heads/main/Fucked5'))()
+local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/ilovechubbyorangecat/script/refs/heads/main/notification.lua",true))()
+        
+NotificationLibrary.Info("Script By Nowhywhats", "Credit")
+
+wait(0.5)
+
+local Window = Rayfield:CreateWindow({
+   Name = "R&D",
+   Icon = 0,
+   LoadingTitle = "",
+   LoadingSubtitle = "",
+   ShowText = "Menu",
+   Theme = "Default",
+
+   ToggleUIKeybind = "K",
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil,
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+
+   KeySystem = false,
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+local god, mm, mm2, mm3, mm4, mm5 = false, false, false, false, false, false
+local TargetWalkspeed = 0
+local auto = false
+local currentFov = 70
+local SCAN_INTERVAL = 0.7
+local acc = 0
+
+local function safeBox(part, color, size, t)
+	if not part or not part:IsA("BasePart") then return end
+	local box = part:FindFirstChild("ESPBox")
+	if not box then
+		box = Instance.new("BoxHandleAdornment")
+		box.Name = "ESPBox"
+		box.AlwaysOnTop = true
+		box.ZIndex = 0
+		box.Adornee = part
+		box.Parent = part
+	end
+	box.Size = size
+	box.Color3 = color or Color3.fromRGB(255,255,0)
+	box.Transparency = t
+end
+
+local function createText(parent, text, rgb, transparency, size)
+	if parent:FindFirstChild("BillboardText") then return end
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "BillboardText"
+	billboard.Size = size
+	billboard.Adornee = parent
+	billboard.AlwaysOnTop = true
+	billboard.LightInfluence = 0
+	billboard.StudsOffset = Vector3.new(0, 3, 0)
+	billboard.Parent = parent
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.TextScaled = true
+	label.Text = text
+	label.TextColor3 = rgb or Color3.fromRGB(255, 255, 255)
+	label.TextTransparency = transparency or 0
+	label.Font = Enum.Font.SciFi
+	label.Parent = billboard
+
+	return billboard
+end
+
+local function alertnotif()
+	local notif = Instance.new("Sound")
+	notif.Name = "notif_alert"
+	notif.SoundId = "rbxassetid://1570162306"
+	notif.Volume = 1.5
+	notif.Parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+	pcall(function() notif:Play() end)
+	Debris:AddItem(notif, 2)
+end
+
+local function pnevma()
+	local notif = Instance.new("Sound")
+	notif.Name = "notif_alert"
+	notif.SoundId = "rbxassetid://6622083025"
+	notif.Volume = 2
+	notif.Parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+	pcall(function() notif:Play() end)
+	Debris:AddItem(notif, 2)
+end
+
+local function distance(a, b)
+    return (a - b).Magnitude
+end
+
+local function checkMonsters()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") or obj:IsA("BasePart") then
+            local name = string.lower(obj.Name)
+            if string.find(name, "monster") and not string.find(name, "monster2") then
+                local pos
+                if obj:IsA("BasePart") then
+                    pos = obj.Position
+                elseif obj.PrimaryPart then
+                    pos = obj.PrimaryPart.Position
+                end
+                if pos and distance(hrp.Position, pos) <= 100 then
+                    obj:Destroy()
+                end
+            end
+        end
+    end
+end
+
+local function doScanOnce()
+	if not Workspace or not Workspace:FindFirstChild("rooms") then return end
+	for _, desc in ipairs(Workspace.rooms:GetDescendants()) do
+		local name = (desc.Name and desc.Name:lower()) or ""
+		if desc:IsA("Model") and name == "battery" then
+			for _, p in ipairs(desc:GetDescendants()) do
+				if p:IsA("BasePart") then
+					safeBox(p, Color3.fromRGB(255,255,0), Vector3.new(1,1,1), 0.6)
+					createText(p, "Battery", Color3.fromRGB(255,255,0), 0.6, UDim2.new(0, 90, 0, 20))
+				end
+			end
+		
+		elseif desc:IsA("Model") and name == "hidetable" then
+		    createText(desc, "Table", Color3.fromRGB(200,50,255), 0.6, UDim2.new(0, 120, 0, 30))
+
+		elseif desc:IsA("Model") and name == "hidelocker" then
+			local hasJack = false
+			for _, v in ipairs(desc:GetDescendants()) do
+				if v.Name:lower() == "jack" then
+					hasJack = true
+					break
+				end
+			end
+
+			if desc:FindFirstChild("hitbox") then
+				local billboard = desc.hitbox:FindFirstChild("BillboardText")
+				if not hasJack then
+					safeBox(desc.hitbox, Color3.fromRGB(0,255,0), Vector3.new(3,6,3), 0.7)
+					if not billboard then
+						billboard = createText(desc.hitbox, "Locker", Color3.fromRGB(0,255,0), 0.7, UDim2.new(0, 130, 0, 30))
+					end
+					if billboard and billboard:FindFirstChildOfClass("TextLabel") then
+						local label = billboard:FindFirstChildOfClass("TextLabel")
+						label.Text = "Locker"
+						label.TextColor3 = Color3.fromRGB(0,255,0)
+					end
+				else
+					safeBox(desc.hitbox, Color3.fromRGB(255,0,0), Vector3.new(3,6,3), 0.7)
+					if not billboard then
+						billboard = createText(desc.hitbox, "Shells", Color3.fromRGB(255,0,0), 0, UDim2.new(0, 140, 0, 40))
+					end
+					if billboard and billboard:FindFirstChildOfClass("TextLabel") then
+						local label = billboard:FindFirstChildOfClass("TextLabel")
+						label.Text = "Shells"
+						label.TextColor3 = Color3.fromRGB(255,0,0)
+						if label.Text == "Shells" and mm5 then
+						desc:Destroy()
+						end
+					end
+				end
+			end
+        
+		elseif desc:IsA("BasePart") and name == "door" and (desc.Parent and desc.Parent.Name:lower() ~= "hidelocker") then
+			safeBox(desc, Color3.fromRGB(0,150,150), desc.Size, 0.8)
+		end
+	end
+end
+
+local function updateMonsterESP(inst, labelName)
+    if not inst:IsA("BasePart") and not inst.PrimaryPart then return end
+    
+    local root = inst:IsA("Model") and inst.PrimaryPart or inst
+    if not root then return end
+
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    
+    local distance = (hrp.Position - root.Position).Magnitude
+    local text = string.format("%s\n[%.0f studs]", labelName, distance)
+
+    safeBox(root, Color3.fromRGB(255,0,0), Vector3.new(10,10,10), 0.5)
+
+    local billboard = root:FindFirstChild("BillboardText")
+    if not billboard then
+        billboard = createText(root, text, Color3.fromRGB(255,0,0), 0, UDim2.new(0, 160, 0, 50))
+    end
+
+    if billboard and billboard:FindFirstChildOfClass("TextLabel") then
+        billboard:FindFirstChildOfClass("TextLabel").Text = text
+    end
+end
+
+local function doMonsterESP()
+    for _, inst in ipairs(Workspace:GetChildren()) do
+        local name = (inst.Name and inst.Name:lower()) or ""
+        if name == "monster" then
+            updateMonsterESP(inst, "Monster")
+        elseif name == "monster2" then
+            updateMonsterESP(inst, "Monster2")
+        elseif name == "???" then
+            updateMonsterESP(inst, "A-666")
+        end
+    end
+end
+
+local function bypass()
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") or part:IsA("Decal") then
+            if part.Name ~= "HumanoidRootPart" then
+                part.Transparency = 0
+                part.LocalTransparencyModifier = 1
+            end
+        end
+    end
+end
+
+local function des()
+for _, obj in ipairs(workspace:GetDescendants()) do
+	if obj:IsA("ColorCorrectionEffect") or obj.Name == "Debris" then
+		obj:Destroy()
+	end
+end
+end
+
+local Tab = Window:CreateTab("Player", "User")
+
+local l = Instance.new("PointLight")
+l.Range = 10000
+l.Enabled = false
+l.Parent = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+
+local Toggle = Tab:CreateToggle({
+   Name = "Godmode [Warning: No Work On A-200 And Hole]",
+   CurrentValue = false,
+   Flag = "Toggle1",
+   Callback = function(Value)
+   god = Value
+   end,
+})
+
+local Toggle = Tab:CreateToggle({
+   Name = "Fullbright",
+   CurrentValue = false,
+   Flag = "Toggle2",
+   Callback = function(Value)
+   l.Enabled = Value
+   end,
+})
+
+local Slider = Tab:CreateSlider({
+   Name = "Brightness",
+   Range = {0, 5},
+   Increment = 0.1,
+   Suffix = "",
+   CurrentValue = 1,
+   Flag = "Slider1",
+   Callback = function(Value)
+   l.Brightness = Value
+   end,
+})
+
+local ColorPicker = Tab:CreateColorPicker({
+    Name = "Color Fullbright",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "ColorPicker1",
+    Callback = function(Value)
+        l.Color = Value
+    end
+})
+
+local Slider = Tab:CreateSlider({
+   Name = "Tpwalk",
+   Range = {0, 80},
+   Increment = 1,
+   Suffix = "",
+   CurrentValue = 5,
+   Flag = "Slider2",
+   Callback = function(Value)
+   TargetWalkspeed = Value
+   end,
+})
+
+local Slider = Tab:CreateSlider({
+   Name = "Fov",
+   Range = {70, 120},
+   Increment = 1,
+   Suffix = "",
+   CurrentValue = 10,
+   Flag = "Slider3",
+   Callback = function(Value)
+   currentFov = Value
+   end,
+})
+
+local Tab2 = Window:CreateTab("Game", "Settings")
+local Section = Tab2:CreateSection("Entity")
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Notification Monster",
+   CurrentValue = false,
+   Flag = "Toggle3",
+   Callback = function(Value)
+   mm = Value
+   end,
+})
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Notification Monster2",
+   CurrentValue = false,
+   Flag = "Toggle4",
+   Callback = function(Value)
+   mm2 = Value
+   end,
+})
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Notification Pnevma",
+   CurrentValue = false,
+   Flag = "Toggle5",
+   Callback = function(Value)
+   mm3 = Value
+   end,
+})
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Notification Kalypto",
+   CurrentValue = false,
+   Flag = "Toggle6",
+   Callback = function(Value)
+   mm4 = Value
+   end,
+})
+
+local Button5 = Tab2:CreateButton({
+   Name = "Remove A-50",
+   Callback = function()
+   
+   if game.ReplicatedStorage:FindFirstChild("darknesslocker") then
+   game.ReplicatedStorage.darknesslocker:Destroy()
+   end
+   
+   end,
+})
+
+local Button6 = Tab2:CreateButton({
+   Name = "Remove A-10",
+   Callback = function()
+   
+   if game.Workspace:FindFirstChild("voidspace") and game.Workspace:FindFirstChild("Void") then
+   game.Workspace:WaitForChild("voidspace"):Destroy()
+   game.Workspace:WaitForChild("Void"):Destroy()
+   end
+   
+   end,
+})
+
+local Section = Tab2:CreateSection(" ")
+
+local Button = Tab2:CreateButton({
+   Name = "Destroy Monster!!!",
+   Callback = function()
+   
+   if Workspace:FindFirstChild("monster") then
+   Workspace.monster:Destroy() 
+   else
+   NotificationLibrary.Error("Monster does not exist yet", "Error")
+   end
+   
+   end,
+})
+
+local Button2 = Tab2:CreateButton({
+   Name = "Destroy Monster2!!!",
+   Callback = function()
+   
+   if Workspace:FindFirstChild("monster2") then
+   Workspace.monster2:Destroy() 
+   else
+   NotificationLibrary.Error("Monster2 does not exist yet", "Error")
+   end
+   
+   end,
+})
+
+local Button3 = Tab2:CreateButton({
+   Name = "Destroy Pnevma!!!",
+   Callback = function()
+   
+   if Workspace:FindFirstChild("Spirit") then
+   Workspace.Spirit:Destroy() 
+   else
+   NotificationLibrary.Error("Pnevma does not exist yet", "Error")
+   end
+   
+   end,
+})
+
+local Button4 = Tab2:CreateButton({
+   Name = "Spawn Red Skull",
+   Callback = function()
+   
+   LocalPlayer.Character:PivotTo(LocalPlayer.Character:GetPivot() * CFrame.new(10000,10000,10000))
+   
+   end,
+})
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Auto Destroy Monster",
+   CurrentValue = false,
+   Flag = "Toggle7",
+   Callback = function(Value)
+   auto = Value
+   end,
+})
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Auto Destroy A-40",
+   CurrentValue = false,
+   Flag = "Toggle7",
+   Callback = function(Value)
+   mm5 = Value
+   end,
+})
+
+local Tab3 = Window:CreateTab("Credit", 0)
+local Paragraph = Tab3:CreateParagraph({Title = "Script Credit By Nowhywhat", Content = ""})
+
+RunService.RenderStepped:Connect(function()
+	if god and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+		LocalPlayer.Character.Humanoid.MaxHealth = 999999
+		LocalPlayer.Character.Humanoid.Health = LocalPlayer.Character.Humanoid.MaxHealth
+	end
+    
+	Workspace.CurrentCamera.FieldOfView = currentFov
+	pcall(function()
+		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+			local hum = LocalPlayer.Character.Humanoid
+			if hum.MoveDirection.Magnitude > 0 and TargetWalkspeed > 0 then
+				LocalPlayer.Character:TranslateBy(hum.MoveDirection * TargetWalkspeed/50)
+			end
+		end
+	end)
+end)
+
+Workspace.ChildAdded:Connect(function(inst)
+	if inst.Name == "monster" and mm then alertnotif(); NotificationLibrary.Warn("Monster Has Spawn", "Warn")
+	elseif inst.Name == "monster2" and mm2 then alertnotif(); NotificationLibrary.Warn("Monster2 Has Spawn", "Warn")
+	elseif inst.Name == "Spirit" and mm3 then pnevma(); NotificationLibrary.Warn("Pnevma Has Spawn", "Warn")
+	elseif inst.Name == "handdebris" and mm4 then alertnotif(); NotificationLibrary.Warn("Kalypto Has Spawn", "Warn")
+	end
+end)
+
+RunService.Heartbeat:Connect(function(dt)
+	acc = acc + dt
+	if acc < SCAN_INTERVAL then return end
+	acc = 0
+	doScanOnce()
+end)
+
+RunService.Heartbeat:Connect(function()
+bypass()
+end)
+
+task.spawn(function()
+    while true do
+    game.Players.LocalPlayer.PlayerGui.MainGui.shade.Visible = false
+    game.Players.LocalPlayer.PlayerGui.MainGui.hiding.Visible = false
+    game.Players.LocalPlayer.PlayerGui.MainGui.static.Visible = false
+    game.Players.LocalPlayer.PlayerGui.MainGui.health.Visible = false
+    game.Players.LocalPlayer.PlayerGui.MainGui.stamina.Visible = false
+    game.Players.LocalPlayer.PlayerGui.disclaimers.admin.Visible = true
+    game.Players.LocalPlayer.PlayerGui.disclaimers.admin.TextColor3 = Color3.fromRGB(0, 255, 0)
+    game.Players.LocalPlayer.PlayerGui.disclaimers.admin.Text = "Room: " .. game.Workspace.roomnumber.Value .. ""
+        doMonsterESP()
+        des()
+        if auto then checkMonsters() end
+        task.wait(0.1)
+    
+    end
+end)
